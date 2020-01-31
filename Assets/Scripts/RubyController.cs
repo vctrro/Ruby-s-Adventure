@@ -87,12 +87,12 @@ public class RubyController : MonoBehaviour
         Health = Mathf.Clamp(Health + amount, 0, maxHealth);
         if (amount > 0) 
         {
-            Debug.Log($"{name} восстанавливает {amount} здоровья, всего {Health}");
+            Debug.Log($"<color=green>{name} восстанавливает {amount} здоровья, всего {Health}</color>");
         }
         else
         {
             animator.SetTrigger("Hit");
-            Debug.Log($"{name} теряет {-amount} здоровья, осталось {Health}");
+            Debug.Log($"<color=red>{name} теряет {-amount} здоровья, осталось {Health}</color>");
             if (Health == 0) 
             {
                 Destroy(gameObject);
