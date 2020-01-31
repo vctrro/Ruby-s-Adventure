@@ -49,15 +49,6 @@ public class EnemyController : MonoBehaviour
         animator.SetFloat("Move X", moveDirection.x);
         animator.SetFloat("Move Y", moveDirection.y);        
         //Debug.Log($"{rb2d.position}  {moveDirection}");
-        
-        print("Starting " + Time.time);
-        StartCoroutine(WaitAndPrint(2.0F));
-        print($"<color=green>Before WaitAndPrint Finishes {Time.time}</color>");
-    }
-
-    IEnumerator WaitAndPrint(float waitTime) {
-        yield return new WaitForSeconds(waitTime);
-        Debug.Log($"<color=red>WaitAndPrint {Time.time}</color>");
     }
 
     IEnumerator WaitAndPrint(float waitTime) {
