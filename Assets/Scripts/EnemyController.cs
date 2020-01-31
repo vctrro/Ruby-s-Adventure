@@ -17,6 +17,9 @@ public class EnemyController : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         startPosition = rb2d.position;
+        print("Starting " + Time.time);
+        StartCoroutine(WaitAndPrint(2.0F));
+        print($"<color=green>Before WaitAndPrint Finishes {Time.time}</color>");
     }
 
     // Update is called once per frame
@@ -46,6 +49,11 @@ public class EnemyController : MonoBehaviour
         animator.SetFloat("Move X", moveDirection.x);
         animator.SetFloat("Move Y", moveDirection.y);        
         //Debug.Log($"{rb2d.position}  {moveDirection}");        
+    }
+
+    IEnumerator WaitAndPrint(float waitTime) {
+        yield return new WaitForSeconds(waitTime);
+        Debug.Log($"<color=red>WaitAndPrint {Time.time}</color>");
     }
 
     private void MoveTo(Vector2 direction)
@@ -80,7 +88,6 @@ public class EnemyController : MonoBehaviour
         if (other.gameObject.name == "Ruby") 
             persecution = false;
     }
-
 
     public void Fix()
     {
