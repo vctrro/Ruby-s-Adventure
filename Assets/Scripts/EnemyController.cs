@@ -25,9 +25,8 @@ public class EnemyController : MonoBehaviour
         if (isFixed) 
         {
             fixTime -= Time.deltaTime;
-            if (fixTime > 0) {
-                return;
-            }
+            if (fixTime > 0) return;
+            
             isFixed = false;
             animator.SetBool("isFixed", false);           
         }
@@ -46,8 +45,7 @@ public class EnemyController : MonoBehaviour
 
         animator.SetFloat("Move X", moveDirection.x);
         animator.SetFloat("Move Y", moveDirection.y);        
-        //Debug.Log($"{rb2d.position}  {moveDirection}");
-        
+        //Debug.Log($"{rb2d.position}  {moveDirection}");        
     }
 
     private void MoveTo(Vector2 direction)
@@ -55,7 +53,6 @@ public class EnemyController : MonoBehaviour
         moveDirection = direction - rb2d.position;
         moveDirection.Normalize();
         rb2d.position += moveDirection * maxSpeed * Time.deltaTime;
-
     }
 
     private void OnCollisionEnter2D(Collision2D other) 
@@ -81,7 +78,7 @@ public class EnemyController : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other) {
         if (other.gameObject.name == "Ruby") 
-        persecution = false;
+            persecution = false;
     }
 
     public void Fix()
