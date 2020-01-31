@@ -81,6 +81,7 @@ public class EnemyController : MonoBehaviour
             persecution = false;
     }
 
+
     public void Fix()
     {
         isFixed = true;
