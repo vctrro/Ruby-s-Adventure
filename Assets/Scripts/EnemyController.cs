@@ -5,19 +5,17 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     public float maxSpeed = 2f;
-    bool isFixed;
+    bool isFixed, persecution;
     float fixTime;
     Rigidbody2D rb2d;
     Animator animator;
-    Vector2 startPosition, moveDirection, rubyPos;
-    GameObject ruby;
+    Vector2 startPosition, moveDirection;
 
     // Start is called before the first frame update
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        ruby = GameObject.Find("Ruby");
         startPosition = rb2d.position;
     }
 
@@ -27,34 +25,30 @@ public class EnemyController : MonoBehaviour
         if (isFixed) 
         {
             fixTime -= Time.deltaTime;
-            if (fixTime > 0) {
-                return;
-            }
+            if (fixTime > 0) return;
+            
             isFixed = false;
             animator.SetBool("isFixed", false);           
         }
-        if (ruby != null)
-        rubyPos = ruby.transform.position;      
 
-        if (Vector2.Distance(rb2d.position, rubyPos) < 6.0f)
-        {            
-            MoveTo(rubyPos);
-        }
-        else 
+        if (!persecution)
         {
             if ((Vector2.Distance(startPosition, rb2d.position) > 0.2f)) //!rb2d.Equals(startPosition))
             {
-                MoveTo(startPosition);              
+                MoveTo(startPosition);
+            }
+            else
+            {
+                moveDirection.Set(0,0); 
             }
         }
+
         animator.SetFloat("Move X", moveDirection.x);
         animator.SetFloat("Move Y", moveDirection.y);        
-        
-        moveDirection.Set(0,0);
         //Debug.Log($"{rb2d.position}  {moveDirection}");        
     }
 
-    private void MoveTo(Vector2 direction) 
+    private void MoveTo(Vector2 direction)
     {
         moveDirection = direction - rb2d.position;
         moveDirection.Normalize();
@@ -63,15 +57,30 @@ public class EnemyController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D other) 
     {
-        if (other.gameObject == ruby) 
+        if (other.gameObject.name == "Ruby") 
         {
-            ruby.GetComponent<RubyController>().changeHealth(-1);
+            other.collider.GetComponent<RubyController>().changeHealth(-1);
         }
         else
         {
             //обходить препятствия       
         }
-    }    
+    }
+
+    private void OnTriggerStay2D(Collider2D other) 
+    {
+        if (other.gameObject.name == "Ruby") 
+        {
+            MoveTo(other.transform.position);
+            persecution = true;
+        }        
+    }
+
+    private void OnTriggerExit2D(Collider2D other) {
+        if (other.gameObject.name == "Ruby") 
+            persecution = false;
+    }
+
 
     public void Fix()
     {

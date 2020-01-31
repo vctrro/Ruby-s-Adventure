@@ -17873,10 +17873,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 865159673}
     m_Modifications:
-    - target: {fileID: 30677219, guid: 68a84f6d397a6934399c3be00a3c2b0f, type: 3}
-      propertyPath: InitialModule.rotation3D
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3013506153303577079, guid: 68a84f6d397a6934399c3be00a3c2b0f,
         type: 3}
       propertyPath: m_Name
