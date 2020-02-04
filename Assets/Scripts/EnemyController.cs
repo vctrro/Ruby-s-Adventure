@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent (typeof(Rigidbody2D), typeof(Animator))]
 public class EnemyController : MonoBehaviour
 {
     public float maxSpeed = 2f;

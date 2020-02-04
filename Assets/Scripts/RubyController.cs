@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent (typeof(Rigidbody2D), typeof(Animator))]
 public class RubyController : MonoBehaviour
 {
     public int maxHealth = 5;
@@ -40,6 +41,7 @@ public class RubyController : MonoBehaviour
         // Vector2 move = new Vector2(horizontal, vertical);
         move.Set(horizontal, vertical);
         move += Joystick.Direction;
+        Vector2 temp = move; 
         move.Normalize();
 
         if(!Mathf.Approximately(move.x, 0f) || !Mathf.Approximately(move.y, 0.0f))
@@ -47,6 +49,7 @@ public class RubyController : MonoBehaviour
             moveDirection.Set(move.x, move.y);
             moveDirection.Normalize();
         }
+        Debug.Log(temp /  moveDirection);
         animator.SetFloat("Look X", moveDirection.x);
         animator.SetFloat("Look Y", moveDirection.y);
         animator.SetFloat("Speed", move.magnitude);
