@@ -8,6 +8,7 @@ public class EnemyController : MonoBehaviour
     public float maxSpeed = 2f;
     bool isFixed, persecution;
     float fixTime;
+    RubyController ruby;
     Rigidbody2D rb2d;
     Animator animator;
     Vector2 startPosition, moveDirection;
@@ -15,6 +16,7 @@ public class EnemyController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // ruby.OnBigBoom.AddListener(()=>{Fix();});
         rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         startPosition = rb2d.position;

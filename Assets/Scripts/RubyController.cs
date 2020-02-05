@@ -1,17 +1,21 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-[RequireComponent (typeof(Rigidbody2D), typeof(Animator))]
+[RequireComponent (typeof(Rigidbody2D), typeof(Animator))]      //Требует наличия двух компонентов, при отсутствии создает их
 public class RubyController : MonoBehaviour
 {
+    [SerializeField]
+    public OnHealthEvent OnHealthChange;                      //Событие при изменении здоровья
+    public UnityEvent OnBigBoom;
     [Header("Максимальное здоровье")]
     [SerializeField]
-    protected int maxHealth = 5;
-    public float maxSpeed = 3f;
+    int maxHealth = 5;
+    private float maxSpeed = 3f;
     public int Health { get; private set; }
 
-    public GameObject projectilePrefab;
+    [SerializeField]
+    GameObject projectilePrefab;
 
     public float timeInvincible = 2.0f;
     bool isInvincible;
@@ -21,8 +25,8 @@ public class RubyController : MonoBehaviour
     Rigidbody2D rb2d;
     Animator animator;
     Vector2 move, moveDirection;
-    protected FloatingJoystick Joystick;
-    protected JButton Button;
+    FloatingJoystick Joystick;
+    JButton jumpButton;
     
     void Start()
     {
@@ -30,7 +34,7 @@ public class RubyController : MonoBehaviour
         animator = GetComponent<Animator>();
         Health = maxHealth;
         Joystick = FindObjectOfType<FloatingJoystick>();
-        Button = FindObjectOfType<JButton>();
+        jumpButton = FindObjectOfType<JButton>();
         // QualitySettings.vSyncCount = 0;
         // Application.targetFrameRate = 24;
         print("Starting " + Time.time);
@@ -63,17 +67,22 @@ public class RubyController : MonoBehaviour
             if (invincibleTimer < 0)
             isInvincible = false;
         }
-
+        
+        if (Input.GetKeyDown(KeyCode.B))        //для теста 
+        {
+            OnBigBoom.Invoke();
+        }
+        
         if (Input.GetKeyDown(KeyCode.C))
         {
             LaunchCog();
         }
-        if (!buttonPressed && Button.Pressed) 
+        if (!buttonPressed && jumpButton.Pressed) 
         {
             buttonPressed = true;
             LaunchCog();
         }
-        buttonPressed = Button.Pressed;
+        buttonPressed = jumpButton.Pressed;
     }
 
     IEnumerator WaitAndPrint(float waitTime) {
@@ -93,6 +102,7 @@ public class RubyController : MonoBehaviour
             Health = Mathf.Clamp(Health + amount, 0, maxHealth);
 
             animator.SetTrigger("Hit");
+            OnHealthChange.Invoke(Health);
             Debug.Log($"<color=red>{name} теряет {-amount} здоровья, осталось {Health}</color>");
             if (Health == 0) 
             {
@@ -108,6 +118,7 @@ public class RubyController : MonoBehaviour
             return false;
 
             Health = Mathf.Clamp(Health + amount, 0, maxHealth);
+            OnHealthChange.Invoke(Health);
             Debug.Log($"<color=green>{name} восстанавливает {amount} здоровья, всего {Health}</color>");
             return true;
         }
@@ -120,4 +131,10 @@ public class RubyController : MonoBehaviour
         projectile.Launch(moveDirection);
         animator.SetTrigger("Launch");
     }
+}
+
+[System.Serializable]
+public class OnHealthEvent : UnityEvent<int>
+{
+
 }

@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
+    [Header("Сила снаряда")]
+    [SerializeField]
+    private int cogForce = 300;
     Rigidbody2D rb2d;
     Vector2 startPosition;
-    public int cogForce = 300;
+    
     // Start is called before the first frame update
     void Awake()
     {
