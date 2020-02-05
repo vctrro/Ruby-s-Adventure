@@ -60,7 +60,7 @@ public class EnemyController : MonoBehaviour
     {
         if (other.gameObject.name == "Ruby") 
         {
-            other.collider.GetComponent<RubyController>().changeHealth(-1);
+            other.collider.GetComponent<RubyController>().ChangeHealth(-1);
         }
         else
         {

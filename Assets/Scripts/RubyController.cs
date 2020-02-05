@@ -5,7 +5,9 @@ using UnityEngine;
 [RequireComponent (typeof(Rigidbody2D), typeof(Animator))]
 public class RubyController : MonoBehaviour
 {
-    public int maxHealth = 5;
+    [Header("Максимальное здоровье")]
+    [SerializeField]
+    protected int maxHealth = 5;
     public float maxSpeed = 3f;
     public int Health { get; private set; }
 
@@ -18,10 +20,10 @@ public class RubyController : MonoBehaviour
 
     Rigidbody2D rb2d;
     Animator animator;
-    Vector2 move, moveDirection = new Vector2(0,0);
+    Vector2 move, moveDirection;
     protected FloatingJoystick Joystick;
     protected JButton Button;
-    // Start is called before the first frame update
+    
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
@@ -31,17 +33,17 @@ public class RubyController : MonoBehaviour
         Button = FindObjectOfType<JButton>();
         // QualitySettings.vSyncCount = 0;
         // Application.targetFrameRate = 24;
+        print("Starting " + Time.time);
+        StartCoroutine(WaitAndPrint(2.0F));
+        print($"<color=green>Before WaitAndPrint Finishes {Time.time}</color>");
     }
 
-    // Update is called once per frame
     void Update()
     {
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
-        // Vector2 move = new Vector2(horizontal, vertical);
         move.Set(horizontal, vertical);
         move += Joystick.Direction;
-        Vector2 temp = move; 
         move.Normalize();
 
         if(!Mathf.Approximately(move.x, 0f) || !Mathf.Approximately(move.y, 0.0f))
@@ -49,15 +51,12 @@ public class RubyController : MonoBehaviour
             moveDirection.Set(move.x, move.y);
             moveDirection.Normalize();
         }
-        Debug.Log(temp /  moveDirection);
         animator.SetFloat("Look X", moveDirection.x);
         animator.SetFloat("Look Y", moveDirection.y);
         animator.SetFloat("Speed", move.magnitude);
 
         rb2d.position += move * maxSpeed * Time.deltaTime;
         
-        //rb2d.MovePosition(position);
-
         if (isInvincible) 
         {
             invincibleTimer -= Time.deltaTime;
@@ -77,31 +76,40 @@ public class RubyController : MonoBehaviour
         buttonPressed = Button.Pressed;
     }
 
-    public void changeHealth(int amount) 
+    IEnumerator WaitAndPrint(float waitTime) {
+        yield return new WaitForSeconds(waitTime);
+        Debug.Log($"<color=red>WaitAndPrint {Time.time}</color>");
+    }
+
+    public bool ChangeHealth(int amount) 
     {
         if (amount < 0)
         {
             if (isInvincible)
-            return;
+            return false;
 
             isInvincible = true;
             invincibleTimer = timeInvincible;
-        }
-        Health = Mathf.Clamp(Health + amount, 0, maxHealth);
-        if (amount > 0) 
-        {
-            Debug.Log($"<color=green>{name} восстанавливает {amount} здоровья, всего {Health}</color>");
-        }
-        else
-        {
+            Health = Mathf.Clamp(Health + amount, 0, maxHealth);
+
             animator.SetTrigger("Hit");
             Debug.Log($"<color=red>{name} теряет {-amount} здоровья, осталось {Health}</color>");
             if (Health == 0) 
             {
                 Destroy(gameObject);
                 Debug.Log($"{name} умерла");
-                Application.Quit();
-            }            
+                //Application.Quit();
+            }
+            return true;
+        }
+        else 
+        {
+            if (Health == maxHealth)
+            return false;
+
+            Health = Mathf.Clamp(Health + amount, 0, maxHealth);
+            Debug.Log($"<color=green>{name} восстанавливает {amount} здоровья, всего {Health}</color>");
+            return true;
         }
     }
 
