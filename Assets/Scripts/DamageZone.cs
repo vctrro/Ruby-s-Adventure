@@ -15,7 +15,7 @@ public class DamageZone : MonoBehaviour
 
         if (controller != null) 
         {            
-            controller.changeHealth(-1);            
+            controller.ChangeHealth(-1);            
         }
     }
 }
