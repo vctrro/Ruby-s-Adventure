@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent (typeof(Rigidbody2D), typeof(Animator))]
 public class EnemyController : MonoBehaviour
 {
     public float maxSpeed = 2f;
@@ -17,9 +18,6 @@ public class EnemyController : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         startPosition = rb2d.position;
-        print("Starting " + Time.time);
-        StartCoroutine(WaitAndPrint(2.0F));
-        print($"<color=green>Before WaitAndPrint Finishes {Time.time}</color>");
     }
 
     // Update is called once per frame
@@ -51,11 +49,6 @@ public class EnemyController : MonoBehaviour
         //Debug.Log($"{rb2d.position}  {moveDirection}");
     }
 
-    IEnumerator WaitAndPrint(float waitTime) {
-        yield return new WaitForSeconds(waitTime);
-        Debug.Log($"<color=red>WaitAndPrint {Time.time}</color>");
-    }
-
     private void MoveTo(Vector2 direction)
     {
         moveDirection = direction - rb2d.position;
@@ -67,7 +60,7 @@ public class EnemyController : MonoBehaviour
     {
         if (other.gameObject.name == "Ruby") 
         {
-            other.collider.GetComponent<RubyController>().changeHealth(-1);
+            other.collider.GetComponent<RubyController>().ChangeHealth(-1);
         }
         else
         {

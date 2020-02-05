@@ -15469,7 +15469,7 @@ MonoBehaviour:
   m_Follow: {fileID: 91436058}
   m_Lens:
     FieldOfView: 79
-    OrthographicSize: 7
+    OrthographicSize: 4.5
     NearClipPlane: 0.3
     FarClipPlane: 100
     Dutch: 0
@@ -16134,7 +16134,7 @@ Camera:
   far clip plane: 100
   field of view: 79
   orthographic: 1
-  orthographic size: 7
+  orthographic size: 4.5
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -16875,38 +16875,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 865159673}
     m_Modifications:
-    - target: {fileID: 30677219, guid: 68a84f6d397a6934399c3be00a3c2b0f, type: 3}
-      propertyPath: InitialModule.rotation3D
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 30677219, guid: 68a84f6d397a6934399c3be00a3c2b0f, type: 3}
-      propertyPath: InitialModule.startRotationY.scalar
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 30677219, guid: 68a84f6d397a6934399c3be00a3c2b0f, type: 3}
-      propertyPath: InitialModule.startRotation.scalar
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 30677219, guid: 68a84f6d397a6934399c3be00a3c2b0f, type: 3}
-      propertyPath: InitialModule.startRotationX.scalar
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 30677219, guid: 68a84f6d397a6934399c3be00a3c2b0f, type: 3}
-      propertyPath: ExternalForcesModule.enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 30677219, guid: 68a84f6d397a6934399c3be00a3c2b0f, type: 3}
-      propertyPath: SubModule.enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 30677219, guid: 68a84f6d397a6934399c3be00a3c2b0f, type: 3}
-      propertyPath: SubModule.subEmitters.Array.data[0].emitter
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 30677219, guid: 68a84f6d397a6934399c3be00a3c2b0f, type: 3}
-      propertyPath: playOnAwake
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3013506153303577079, guid: 68a84f6d397a6934399c3be00a3c2b0f,
         type: 3}
       propertyPath: m_Name
@@ -18755,8 +18723,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 200, y: 200}
-  m_SizeDelta: {x: 230, y: 230}
+  m_AnchoredPosition: {x: 180, y: 180}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1666771847
 MonoBehaviour:
