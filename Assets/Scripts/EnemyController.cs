@@ -13,7 +13,6 @@ public class EnemyController : MonoBehaviour
     Animator animator;
     Vector2 startPosition, moveDirection;
 
-    // Start is called before the first frame update
     void Start()
     {
         // ruby.OnBigBoom.AddListener(()=>{Fix();});
@@ -22,7 +21,6 @@ public class EnemyController : MonoBehaviour
         startPosition = rb2d.position;
     }
 
-    // Update is called once per frame
     void Update()
     {        
         if (isFixed) 

@@ -2,22 +2,21 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent (typeof(Rigidbody2D), typeof(Animator))]      //Требует наличия двух компонентов, при отсутствии создает их
+[RequireComponent(typeof(Rigidbody2D), typeof(Animator))]      //Требует наличия двух компонентов, при отсутствии создает их
 public class RubyController : MonoBehaviour
 {
-    [SerializeField]
-    public OnHealthEvent OnHealthChange;                      //Событие при изменении здоровья
-    public UnityEvent OnBigBoom;
     [Header("Максимальное здоровье")]
-    [SerializeField]
-    int maxHealth = 5;
-    private float maxSpeed = 3f;
-    public int Health { get; private set; }
+    [SerializeField] public OnHealthEvent OnHealthChange;                   //Событие при изменении здоровья
+    [SerializeField] public UnityEvent OnBigBoom;
+    [Header("Максимальное здоровье")]
+    [Range(5, 10)]
+    [SerializeField] int maxHealth = 5;
+    [SerializeField] float maxSpeed = 3f;
+    [SerializeField] public GameObject projectilePrefab;
 
-    [SerializeField]
-    GameObject projectilePrefab;
-
-    public float timeInvincible = 2.0f;
+    int _health; // подумать
+    int Health { get { return _health; } set { _health = value; OnHealthChange.Invoke(_health); } }
+    float timeInvincible = 2.0f;
     bool isInvincible;
     float invincibleTimer;
     bool buttonPressed;
@@ -27,7 +26,7 @@ public class RubyController : MonoBehaviour
     Vector2 move, moveDirection;
     FloatingJoystick Joystick;
     JButton jumpButton;
-    
+
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
@@ -50,7 +49,7 @@ public class RubyController : MonoBehaviour
         move += Joystick.Direction;
         move.Normalize();
 
-        if(!Mathf.Approximately(move.x, 0f) || !Mathf.Approximately(move.y, 0.0f))
+        if (!Mathf.Approximately(move.x, 0f) || !Mathf.Approximately(move.y, 0.0f))
         {
             moveDirection.Set(move.x, move.y);
             moveDirection.Normalize();
@@ -60,24 +59,24 @@ public class RubyController : MonoBehaviour
         animator.SetFloat("Speed", move.magnitude);
 
         rb2d.position += move * maxSpeed * Time.deltaTime;
-        
-        if (isInvincible) 
+
+        if (isInvincible)
         {
             invincibleTimer -= Time.deltaTime;
             if (invincibleTimer < 0)
-            isInvincible = false;
+                isInvincible = false;
         }
-        
+
         if (Input.GetKeyDown(KeyCode.B))        //для теста 
         {
             OnBigBoom.Invoke();
         }
-        
+
         if (Input.GetKeyDown(KeyCode.C))
         {
             LaunchCog();
         }
-        if (!buttonPressed && jumpButton.Pressed) 
+        if (!buttonPressed && jumpButton.Pressed)
         {
             buttonPressed = true;
             LaunchCog();
@@ -85,26 +84,26 @@ public class RubyController : MonoBehaviour
         buttonPressed = jumpButton.Pressed;
     }
 
-    IEnumerator WaitAndPrint(float waitTime) {
+    IEnumerator WaitAndPrint(float waitTime)
+    {
         yield return new WaitForSeconds(waitTime);
         Debug.Log($"<color=red>WaitAndPrint {Time.time}</color>");
     }
 
-    public bool ChangeHealth(int amount) 
+    public bool ChangeHealth(int amount)
     {
         if (amount < 0)
         {
             if (isInvincible)
-            return false;
+                return false;
 
             isInvincible = true;
             invincibleTimer = timeInvincible;
             Health = Mathf.Clamp(Health + amount, 0, maxHealth);
 
             animator.SetTrigger("Hit");
-            OnHealthChange.Invoke(Health);
-            Debug.Log($"<color=red>{name} теряет {-amount} здоровья, осталось {Health}</color>");
-            if (Health == 0) 
+            //Debug.Log($"<color=red>{name} теряет {-amount} здоровья, осталось {Health}</color>");
+            if (Health == 0)
             {
                 Destroy(gameObject);
                 Debug.Log($"{name} умерла");
@@ -112,14 +111,13 @@ public class RubyController : MonoBehaviour
             }
             return true;
         }
-        else 
+        else
         {
             if (Health == maxHealth)
-            return false;
+                return false;
 
             Health = Mathf.Clamp(Health + amount, 0, maxHealth);
-            OnHealthChange.Invoke(Health);
-            Debug.Log($"<color=green>{name} восстанавливает {amount} здоровья, всего {Health}</color>");
+            //Debug.Log($"<color=green>{name} восстанавливает {amount} здоровья, всего {Health}</color>");
             return true;
         }
     }
