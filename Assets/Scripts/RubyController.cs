@@ -1,18 +1,20 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using TMPro;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator))]      //Требует наличия двух компонентов, при отсутствии создает их
 public class RubyController : MonoBehaviour
 {
     [Header("Максимальное здоровье")]
-    [SerializeField] public OnHealthEvent OnHealthChange;                   //Событие при изменении здоровья
-    [SerializeField] public UnityEvent OnBigBoom;
-    [Header("Максимальное здоровье")]
     [Range(5, 10)]
     [SerializeField] int maxHealth = 5;
     [SerializeField] float maxSpeed = 3f;
     [SerializeField] public GameObject projectilePrefab;
+    [SerializeField] public TMP_Text _text;
+    [Header("Максимальное здоровье")]
+    [SerializeField] public OnHealthEvent OnHealthChange;                   //Событие при изменении здоровья
+    [SerializeField] public UnityEvent OnBigBoom;
 
     int _health; // подумать
     int Health { get { return _health; } set { _health = value; OnHealthChange.Invoke(_health); } }
