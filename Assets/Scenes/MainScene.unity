@@ -14679,7 +14679,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a55a79aa7bcc26d139ea2d8bd91e1fe6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _text: {fileID: 936125914}
+  _text: {fileID: 0}
 --- !u!1001 &542287721
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15865,6 +15865,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 6905802187244841442}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &934924925 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6742148958512057340, guid: e3651efefcd86ea478848e62c00d388a,
+    type: 3}
+  m_PrefabInstance: {fileID: 6742148959486374537}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae46779ddd165a74b833286639ba0d25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &936125914 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4558823879683682932, guid: a4f35acdb2c80f1608cf48f711c0d894,
@@ -20897,8 +20909,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6742148958512057340, guid: e3651efefcd86ea478848e62c00d388a,
         type: 3}
-      propertyPath: OnBigBoom.m_PersistentCalls.m_Calls.Array.size
-      value: 0
+      propertyPath: _text
+      value: 
+      objectReference: {fileID: 936125914}
+    - target: {fileID: 6742148958512057340, guid: e3651efefcd86ea478848e62c00d388a,
+        type: 3}
+      propertyPath: OnHealthChange.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 934924925}
+    - target: {fileID: 6742148958512057340, guid: e3651efefcd86ea478848e62c00d388a,
+        type: 3}
+      propertyPath: OnHealthChange.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetHealth
       objectReference: {fileID: 0}
     - target: {fileID: 6742148958512057340, guid: e3651efefcd86ea478848e62c00d388a,
         type: 3}
@@ -20907,59 +20929,33 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6742148958512057340, guid: e3651efefcd86ea478848e62c00d388a,
         type: 3}
-      propertyPath: OnHealthChange.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6742148958512057340, guid: e3651efefcd86ea478848e62c00d388a,
-        type: 3}
-      propertyPath: OnHealthChange.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 527726852}
-    - target: {fileID: 6742148958512057340, guid: e3651efefcd86ea478848e62c00d388a,
-        type: 3}
-      propertyPath: OnHealthChange.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SetHealth
-      objectReference: {fileID: 0}
-    - target: {fileID: 6742148958512057340, guid: e3651efefcd86ea478848e62c00d388a,
-        type: 3}
       propertyPath: OnHealthChange.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 6742148958512057340, guid: e3651efefcd86ea478848e62c00d388a,
         type: 3}
-      propertyPath: OnBigBoom.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
+      propertyPath: OnHealthChange.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6742148958512057340, guid: e3651efefcd86ea478848e62c00d388a,
         type: 3}
-      propertyPath: OnBigBoom.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      propertyPath: OnHealthChange.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6742148958512057340, guid: e3651efefcd86ea478848e62c00d388a,
         type: 3}
-      propertyPath: OnBigBoom.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      propertyPath: OnHealthChange.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
-      objectReference: {fileID: 3030025248670682625, guid: 68a84f6d397a6934399c3be00a3c2b0f,
-        type: 3}
+      objectReference: {fileID: 934924925}
     - target: {fileID: 6742148958512057340, guid: e3651efefcd86ea478848e62c00d388a,
         type: 3}
-      propertyPath: OnBigBoom.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: Fix
+      propertyPath: OnHealthChange.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: SetHealth
       objectReference: {fileID: 0}
     - target: {fileID: 6742148958512057340, guid: e3651efefcd86ea478848e62c00d388a,
         type: 3}
-      propertyPath: OnBigBoom.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      propertyPath: OnHealthChange.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
-    - target: {fileID: 6742148958512057340, guid: e3651efefcd86ea478848e62c00d388a,
-        type: 3}
-      propertyPath: jumpButton
-      value: 
-      objectReference: {fileID: 1666771847}
-    - target: {fileID: 6742148958512057340, guid: e3651efefcd86ea478848e62c00d388a,
-        type: 3}
-      propertyPath: maxHealth
-      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6742148958512057341, guid: e3651efefcd86ea478848e62c00d388a,
         type: 3}

@@ -11,9 +11,10 @@ public class RubyController : MonoBehaviour
     [SerializeField] int maxHealth = 5;
     [SerializeField] float maxSpeed = 3f;
     [SerializeField] public GameObject projectilePrefab;
+    [Header("Индикатор здоровья")]
     [SerializeField] public TMP_Text _text;
-    [Header("Максимальное здоровье")]
-    [SerializeField] public OnHealthEvent OnHealthChange;                   //Событие при изменении здоровья
+    [Header("События при изменении здоровья")]
+    [SerializeField] public OnHealthEvent OnHealthChange;      //Событие при изменении здоровья
     [SerializeField] public UnityEvent OnBigBoom;
 
     int _health; // подумать
@@ -26,16 +27,18 @@ public class RubyController : MonoBehaviour
     Rigidbody2D rb2d;
     Animator animator;
     Vector2 move, moveDirection;
-    FloatingJoystick Joystick;
-    JButton jumpButton;
+    FloatingJoystick moveJoystick;
+    JButton Button;
 
-    void Start()
+    private void Awake() {
+        Health = maxHealth;
+    }
+    private void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        Health = maxHealth;
-        Joystick = FindObjectOfType<FloatingJoystick>();
-        jumpButton = FindObjectOfType<JButton>();
+        Button = FindObjectOfType<JButton>();
+        moveJoystick = FindObjectOfType<FloatingJoystick>();
         // QualitySettings.vSyncCount = 0;
         // Application.targetFrameRate = 24;
         print("Starting " + Time.time);
@@ -43,12 +46,12 @@ public class RubyController : MonoBehaviour
         print($"<color=green>Before WaitAndPrint Finishes {Time.time}</color>");
     }
 
-    void Update()
+    private void Update()
     {
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
         move.Set(horizontal, vertical);
-        move += Joystick.Direction;
+        move += moveJoystick.Direction;
         move.Normalize();
 
         if (!Mathf.Approximately(move.x, 0f) || !Mathf.Approximately(move.y, 0.0f))
@@ -78,12 +81,12 @@ public class RubyController : MonoBehaviour
         {
             LaunchCog();
         }
-        if (!buttonPressed && jumpButton.Pressed)
+        if (!buttonPressed && Button.Pressed)
         {
             buttonPressed = true;
             LaunchCog();
         }
-        buttonPressed = jumpButton.Pressed;
+        buttonPressed = Button.Pressed;
     }
 
     IEnumerator WaitAndPrint(float waitTime)
@@ -107,7 +110,7 @@ public class RubyController : MonoBehaviour
             //Debug.Log($"<color=red>{name} теряет {-amount} здоровья, осталось {Health}</color>");
             if (Health == 0)
             {
-                Destroy(gameObject);
+                gameObject.SetActive(false);
                 Debug.Log($"{name} умерла");
                 //Application.Quit();
             }
@@ -122,6 +125,20 @@ public class RubyController : MonoBehaviour
             //Debug.Log($"<color=green>{name} восстанавливает {amount} здоровья, всего {Health}</color>");
             return true;
         }
+    }
+    public void SetHealth(int health)
+    {
+        _text.CrossFadeAlpha(0f, 0f, false);
+        /* if (health < 2)
+        {
+            _text.color = Color.red;
+        }
+        else
+        {
+            _text.color = new Color(1f, 0.6f, 0f);
+        } */
+        _text.text = health.ToString();
+        _text.CrossFadeAlpha(1f, 0.8f, false);
     }
 
     void LaunchCog()
