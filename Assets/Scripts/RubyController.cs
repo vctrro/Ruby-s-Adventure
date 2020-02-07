@@ -112,7 +112,7 @@ public class RubyController : MonoBehaviour
             {
                 gameObject.SetActive(false);
                 Debug.Log($"{name} умерла");
-                //Application.Quit();
+                //Application.Quit();       // --- Меню (!) ---
             }
             return true;
         }
