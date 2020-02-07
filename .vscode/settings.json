@@ -53,5 +53,28 @@
         "ProjectSettings/":true,
         "temp/":true,
         "Temp/":true
-    }
+    },
+    "cSpell.words": [
+        "Mathf"
+    ],
+    "cSpell.enabledLanguageIds": [
+        "Log",
+        "asciidoc",
+        "c",
+        "cpp",
+        "csharp",
+        "git-commit",
+        "git-rebase",
+        "html",
+        "json",
+        "jsonc",
+        "markdown",
+        "plaintext",
+        "restructuredtext",
+        "text",
+        "xml",
+        "yaml",
+        "yml"
+    ],
+    "cSpell.language": "en,ru,en-US"
 } 
