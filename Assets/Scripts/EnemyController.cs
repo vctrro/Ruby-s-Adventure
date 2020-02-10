@@ -5,10 +5,9 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator))]
 public class EnemyController : MonoBehaviour
 {
-    public float maxSpeed = 2f;
-    bool isFixed, persecution;
+    public float maxSpeed = 2.5f;
+    bool isFixed, persecution, obstacle;
     float fixTime;
-    RubyController ruby;
     Rigidbody2D rb2d;
     Animator animator;
     Vector2 startPosition, moveDirection;
@@ -23,7 +22,7 @@ public class EnemyController : MonoBehaviour
 
     void Update()
     {
-        if (isFixed)
+        if (isFixed)        //Если заблокирован
         {
             fixTime -= Time.deltaTime;
             if (fixTime > 0) return;
@@ -32,7 +31,7 @@ public class EnemyController : MonoBehaviour
             animator.SetBool("isFixed", false);
         }
 
-        if (!persecution)
+        if (!persecution && !obstacle)       //Если не преследует игрока идёт домой, если препятствие обходит
         {
             if ((Vector2.Distance(startPosition, rb2d.position) > 0.2f)) //!rb2d.Equals(startPosition))
             {
@@ -41,31 +40,44 @@ public class EnemyController : MonoBehaviour
             else
             {
                 moveDirection.Set(0, 0);
+                animator.SetFloat("Move X", moveDirection.x);
+                animator.SetFloat("Move Y", moveDirection.y);
             }
         }
-
-        animator.SetFloat("Move X", moveDirection.x);
-        animator.SetFloat("Move Y", moveDirection.y);
-        //Debug.Log($"{rb2d.position}  {moveDirection}");
     }
 
     private void MoveTo(Vector2 direction)
     {
+        if (isFixed) return;
         moveDirection = direction - rb2d.position;
         moveDirection.Normalize();
+        animator.SetFloat("Move X", moveDirection.x);
+        animator.SetFloat("Move Y", moveDirection.y);
         rb2d.position += moveDirection * maxSpeed * Time.deltaTime;
     }
 
-    private void OnCollisionEnter2D(Collision2D other)
+    private void OnCollisionStay2D(Collision2D other)
     {
+        if (other.gameObject.tag == "Robot") return;
+
         if (other.gameObject.name == "Ruby")
         {
             other.collider.GetComponent<RubyController>().ChangeHealth(-1);
         }
-        else
+        else 
         {
-            //обходить препятствия       
+            //обходить препятствия
+            if (obstacle) return;
+            Debug.Log("Collide with  "+ other.gameObject.name);
+            obstacle = true;
+            Detour(other.collider.bounds.center, other.collider.bounds.extents, other.otherCollider.bounds.extents);
         }
+    }
+
+    private void OnCollisionExit2D(Collision2D other) 
+    {
+        if ((other.gameObject.tag == "Robot") || (other.gameObject.name == "Ruby")) return;
+        obstacle = false;
     }
 
     private void OnTriggerStay2D(Collider2D other)
@@ -89,5 +101,29 @@ public class EnemyController : MonoBehaviour
         animator.SetBool("isFixed", true);
         fixTime = 2.5f;
         //rb2d.simulated = false;
+    }
+
+    private void Detour(Vector2 center, Vector2 size, Vector2 robotSize)
+    {
+        Vector2 detour;
+
+        if (rb2d.position.x >= center.x)
+            {
+                detour.x = center.x + size.x + robotSize.x;
+            }
+            else
+            {
+                detour.x = center.x - size.x -robotSize.x;
+            }
+            if (rb2d.position.y >= center.y)
+            {
+                detour.y = center.y + size.y + robotSize.y;
+            }
+            else
+            {
+                detour.y = center.y - size.y - robotSize.y;
+            }
+
+            MoveTo(detour);
     }
 }

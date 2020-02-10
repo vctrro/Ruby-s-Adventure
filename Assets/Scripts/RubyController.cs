@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using TMPro;
@@ -12,11 +13,11 @@ public class RubyController : MonoBehaviour
     [SerializeField] float maxSpeed = 3f;
     [SerializeField] public GameObject projectilePrefab;
     [Header("Индикатор здоровья")]
+    [Tooltip("Выберите объект TextMeshPro для отображения количества здоровья персонажа")]
     [SerializeField] public TMP_Text _text;
     [Header("События при изменении здоровья")]
     [SerializeField] public OnHealthEvent OnHealthChange;      //Событие при изменении здоровья
     [SerializeField] public UnityEvent OnBigBoom;
-
     int _health; // подумать
     int Health { get { return _health; } set { _health = value; OnHealthChange.Invoke(_health); } }
     float timeInvincible = 2.0f;
@@ -48,6 +49,7 @@ public class RubyController : MonoBehaviour
 
     private void Update()
     {
+        #region Moving        
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
         move.Set(horizontal, vertical);
@@ -64,7 +66,7 @@ public class RubyController : MonoBehaviour
         animator.SetFloat("Speed", move.magnitude);
 
         rb2d.position += move * maxSpeed * Time.deltaTime;
-
+        #endregion
         if (isInvincible)
         {
             invincibleTimer -= Time.deltaTime;
@@ -72,6 +74,7 @@ public class RubyController : MonoBehaviour
                 isInvincible = false;
         }
 
+        #region Input            
         if (Input.GetKeyDown(KeyCode.B))        //для теста 
         {
             OnBigBoom.Invoke();
@@ -87,6 +90,7 @@ public class RubyController : MonoBehaviour
             LaunchCog();
         }
         buttonPressed = Button.Pressed;
+        #endregion
     }
 
     IEnumerator WaitAndPrint(float waitTime)
@@ -147,6 +151,8 @@ public class RubyController : MonoBehaviour
         Projectile projectile = projectileObject.GetComponent<Projectile>();
         projectile.Launch(moveDirection);
         animator.SetTrigger("Launch");
+        Debug.Log($"{moveDirection}");
+
     }
 }
 
