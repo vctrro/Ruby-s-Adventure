@@ -6,13 +6,13 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     public float maxSpeed = 2.5f;
-    bool isFixed, persecution, obstacle;
-    float fixTime;
-    Rigidbody2D rb2d;
-    Animator animator;
-    Vector2 startPosition, moveDirection;
+    private bool isFixed, persecution, obstacle;
+    private float fixTime;
+    private Rigidbody2D rb2d;
+    private Animator animator;
+    private Vector2 startPosition, moveDirection;
 
-    void Start()
+    private void Start()
     {
         // ruby.OnBigBoom.AddListener(()=>{Fix();});
         rb2d = GetComponent<Rigidbody2D>();
@@ -20,7 +20,7 @@ public class EnemyController : MonoBehaviour
         startPosition = rb2d.position;
     }
 
-    void Update()
+    private void Update()
     {
         if (isFixed)        //Если заблокирован
         {
@@ -68,9 +68,9 @@ public class EnemyController : MonoBehaviour
         {
             //обходить препятствия
             if (obstacle) return;
-            Debug.Log("Collide with  "+ other.gameObject.name);
             obstacle = true;
             Detour(other.collider.bounds.center, other.collider.bounds.extents, other.otherCollider.bounds.extents);
+            Debug.Log($"<color=red>Collide with {other.gameObject.name}</color>");
         }
     }
 
@@ -108,22 +108,26 @@ public class EnemyController : MonoBehaviour
         Vector2 detour;
 
         if (rb2d.position.x >= center.x)
-            {
-                detour.x = center.x + size.x + robotSize.x;
-            }
-            else
-            {
-                detour.x = center.x - size.x -robotSize.x;
-            }
-            if (rb2d.position.y >= center.y)
-            {
-                detour.y = center.y + size.y + robotSize.y;
-            }
-            else
-            {
-                detour.y = center.y - size.y - robotSize.y;
-            }
-
-            MoveTo(detour);
+        {
+            Debug.Log($"<color=green>X IF {rb2d.position.x} >= {center.x}</color>");
+            detour.x = center.x + size.x + robotSize.x +0.1f;
+        }
+        else
+        {
+            Debug.Log($"<color=red>X ELSE {rb2d.position.x} <= {center.x}</color>");
+            detour.x = center.x - size.x - robotSize.x -0.1f;
+        }
+        if (rb2d.position.y >= center.y)
+        {
+            Debug.Log($"<color=green>Y IF {rb2d.position.y} >= {center.y}</color>");
+            detour.y = center.y + size.y + robotSize.y +0.1f;
+        }
+        else
+        {
+            Debug.Log($"<color=red>Y ELSE {rb2d.position.y} <= {center.y}</color>");
+            detour.y = center.y - size.y - robotSize.y -0.1f;
+        }
+        Debug.Log($"<color=white>Move {rb2d.position} to {detour}</color>");
+        MoveTo(detour);
     }
 }

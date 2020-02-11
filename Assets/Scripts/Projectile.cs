@@ -7,18 +7,18 @@ public class Projectile : MonoBehaviour
     [Header("Сила снаряда")]
     [SerializeField]
     private int cogForce = 300;
-    Rigidbody2D rb2d;
-    Vector2 startPosition;
+    private Rigidbody2D rb2d;
+    private Vector2 startPosition;
     
     // Start is called before the first frame update
-    void Awake()
+    private void Awake()
     {
         rb2d = GetComponent<Rigidbody2D>();
         startPosition = transform.position;
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (Vector2.Distance(startPosition, transform.position) > 8.0f)
         {

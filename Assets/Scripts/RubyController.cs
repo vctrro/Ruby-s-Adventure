@@ -9,7 +9,7 @@ public class RubyController : MonoBehaviour
 {
     [Header("Максимальное здоровье")]
     [Range(5, 10)]
-    [SerializeField] int maxHealth = 5;
+    [SerializeField] private int maxHealth = 5;
     [SerializeField] float maxSpeed = 3f;
     [SerializeField] public GameObject projectilePrefab;
     [Header("Индикатор здоровья")]
@@ -18,18 +18,18 @@ public class RubyController : MonoBehaviour
     [Header("События при изменении здоровья")]
     [SerializeField] public OnHealthEvent OnHealthChange;      //Событие при изменении здоровья
     [SerializeField] public UnityEvent OnBigBoom;
-    int _health; // подумать
-    int Health { get { return _health; } set { _health = value; OnHealthChange.Invoke(_health); } }
-    float timeInvincible = 2.0f;
-    bool isInvincible;
-    float invincibleTimer;
-    bool buttonPressed;
+    private int _health; // подумать
+    private int Health { get { return _health; } set { _health = value; OnHealthChange.Invoke(_health); } }
+    private float timeInvincible = 2.0f;
+    private bool isInvincible;
+    private float invincibleTimer;
+    private bool buttonPressed;
 
-    Rigidbody2D rb2d;
-    Animator animator;
-    Vector2 move, moveDirection;
-    FloatingJoystick moveJoystick;
-    JButton Button;
+    private Rigidbody2D rb2d;
+    private Animator animator;
+    private Vector2 move, moveDirection;
+    private FloatingJoystick moveJoystick;
+    private JButton Button;
 
     private void Awake() {
         Health = maxHealth;
@@ -42,9 +42,6 @@ public class RubyController : MonoBehaviour
         moveJoystick = FindObjectOfType<FloatingJoystick>();
         // QualitySettings.vSyncCount = 0;
         // Application.targetFrameRate = 24;
-        print("Starting " + Time.time);
-        StartCoroutine(WaitAndPrint(2.0F));
-        print($"<color=green>Before WaitAndPrint Finishes {Time.time}</color>");
     }
 
     private void Update()
@@ -91,12 +88,6 @@ public class RubyController : MonoBehaviour
         }
         buttonPressed = Button.Pressed;
         #endregion
-    }
-
-    IEnumerator WaitAndPrint(float waitTime)
-    {
-        yield return new WaitForSeconds(waitTime);
-        Debug.Log($"<color=red>WaitAndPrint {Time.time}</color>");
     }
 
     public bool ChangeHealth(int amount)
@@ -151,8 +142,7 @@ public class RubyController : MonoBehaviour
         Projectile projectile = projectileObject.GetComponent<Projectile>();
         projectile.Launch(moveDirection);
         animator.SetTrigger("Launch");
-        Debug.Log($"{moveDirection}");
-
+        // Debug.Log($"{moveDirection}");
     }
 }
 
