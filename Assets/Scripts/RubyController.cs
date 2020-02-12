@@ -136,7 +136,7 @@ public class RubyController : MonoBehaviour
         _text.CrossFadeAlpha(1f, 0.8f, false);
     }
 
-    void LaunchCog()
+    private void LaunchCog()
     {
         GameObject projectileObject = Instantiate(projectilePrefab, rb2d.position + Vector2.up * 0.5f, Quaternion.identity);
         Projectile projectile = projectileObject.GetComponent<Projectile>();

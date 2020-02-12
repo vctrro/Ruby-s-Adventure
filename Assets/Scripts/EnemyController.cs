@@ -11,6 +11,7 @@ public class EnemyController : MonoBehaviour
     private Rigidbody2D rb2d;
     private Animator animator;
     private Vector2 startPosition, moveDirection;
+    public ParticleSystem PS;
 
     private void Start()
     {
@@ -98,6 +99,7 @@ public class EnemyController : MonoBehaviour
     public void Fix()
     {
         isFixed = true;
+        PS.Play();
         animator.SetBool("isFixed", true);
         fixTime = 2.5f;
         //rb2d.simulated = false;
