@@ -7,10 +7,10 @@ public class EnemyController : MonoBehaviour
 {
     public float maxSpeed = 2.5f;
     private bool isFixed, persecution, obstacle;
-    private float fixTime;
+    private float fixTime = 2.5f;
     private Rigidbody2D rb2d;
     private Animator animator;
-    private Vector2 startPosition, moveDirection;
+    private Vector2 startPosition, moveDirection, destination;
     public ParticleSystem PS;
 
     private void Start()
@@ -23,33 +23,30 @@ public class EnemyController : MonoBehaviour
 
     private void Update()
     {
-        if (isFixed)        //Если заблокирован
-        {
-            fixTime -= Time.deltaTime;
-            if (fixTime > 0) return;
+        if (isFixed) return;       //Если заблокирован
 
-            isFixed = false;
-            animator.SetBool("isFixed", false);
-        }
-
-        if (!persecution && !obstacle)       //Если не преследует игрока идёт домой, если препятствие обходит
+        if (!persecution && !obstacle)       //Если не преследует игрока идёт домой, если препятствие - обходит
         {
             if ((Vector2.Distance(startPosition, rb2d.position) > 0.2f)) //!rb2d.Equals(startPosition))
             {
-                MoveTo(startPosition);
+                destination = startPosition;
             }
             else
             {
-                moveDirection.Set(0, 0);
-                animator.SetFloat("Move X", moveDirection.x);
-                animator.SetFloat("Move Y", moveDirection.y);
+                destination = rb2d.position;
             }
         }
+
+        MoveTo(destination);
+    }
+
+    private void LateUpdate() 
+    {
+        
     }
 
     private void MoveTo(Vector2 direction)
     {
-        if (isFixed) return;
         moveDirection = direction - rb2d.position;
         moveDirection.Normalize();
         animator.SetFloat("Move X", moveDirection.x);
@@ -59,6 +56,7 @@ public class EnemyController : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D other)
     {
+        if (isFixed) return;
         if (other.gameObject.tag == "Robot") return;
 
         if (other.gameObject.name == "Ruby")
@@ -71,8 +69,21 @@ public class EnemyController : MonoBehaviour
             if (obstacle) return;
             obstacle = true;
             Detour(other.collider.bounds.center, other.collider.bounds.extents, other.otherCollider.bounds.extents);
-            Debug.Log($"<color=red>Collide with {other.gameObject.name}</color>");
+            
         }
+    }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        Debug.Log($"<color=blue>Collide with {other.gameObject.name}</color>");
+
+        foreach (ContactPoint2D contact in other.contacts)
+            {
+                // Debug.DrawRay(contact.point, contact.normal * 10, Color.white);
+                Debug.Log($"Contact point{contact.point}");
+            }
+            
+        Debug.Log($"<color=red>Velocity {other.relativeVelocity} Magnitude {other.relativeVelocity.magnitude}</color>");
     }
 
     private void OnCollisionExit2D(Collision2D other) 
@@ -85,7 +96,7 @@ public class EnemyController : MonoBehaviour
     {
         if (other.gameObject.name == "Ruby")
         {
-            MoveTo(other.transform.position);
+            destination = other.transform.position;
             persecution = true;
         }
     }
@@ -98,11 +109,21 @@ public class EnemyController : MonoBehaviour
 
     public void Fix()
     {
-        isFixed = true;
         PS.Play();
+        StartCoroutine(StuckInTheMud());
+    }
+
+    public IEnumerator StuckInTheMud()
+    {
+        // rb2d.simulated = false;
+        // rb2d.isKinematic = true;
+        isFixed = true;
         animator.SetBool("isFixed", true);
-        fixTime = 2.5f;
-        //rb2d.simulated = false;
+        yield return new WaitForSeconds(fixTime);
+        isFixed = false;
+        animator.SetBool("isFixed", false);
+        // rb2d.isKinematic = false;
+        // rb2d.simulated = true;
     }
 
     private void Detour(Vector2 center, Vector2 size, Vector2 robotSize)
@@ -111,25 +132,26 @@ public class EnemyController : MonoBehaviour
 
         if (rb2d.position.x >= center.x)
         {
-            Debug.Log($"<color=green>X IF {rb2d.position.x} >= {center.x}</color>");
+            // Debug.Log($"<color=green>X IF {rb2d.position.x} >= {center.x}</color>");
             detour.x = center.x + size.x + robotSize.x +0.1f;
         }
         else
         {
-            Debug.Log($"<color=red>X ELSE {rb2d.position.x} <= {center.x}</color>");
+            // Debug.Log($"<color=red>X ELSE {rb2d.position.x} <= {center.x}</color>");
             detour.x = center.x - size.x - robotSize.x -0.1f;
         }
         if (rb2d.position.y >= center.y)
         {
-            Debug.Log($"<color=green>Y IF {rb2d.position.y} >= {center.y}</color>");
+            // Debug.Log($"<color=green>Y IF {rb2d.position.y} >= {center.y}</color>");
             detour.y = center.y + size.y + robotSize.y +0.1f;
         }
         else
         {
-            Debug.Log($"<color=red>Y ELSE {rb2d.position.y} <= {center.y}</color>");
+            // Debug.Log($"<color=red>Y ELSE {rb2d.position.y} <= {center.y}</color>");
             detour.y = center.y - size.y - robotSize.y -0.1f;
         }
+        destination = detour;
         Debug.Log($"<color=white>Move {rb2d.position} to {detour}</color>");
-        MoveTo(detour);
+        // MoveTo(detour);
     }
 }
