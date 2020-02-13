@@ -44,14 +44,30 @@ public class EnemyController : MonoBehaviour
     {
         
     }
-
-    private void MoveTo(Vector2 direction)
+    private void OnTriggerStay2D(Collider2D other)
     {
-        moveDirection = direction - rb2d.position;
-        moveDirection.Normalize();
-        animator.SetFloat("Move X", moveDirection.x);
-        animator.SetFloat("Move Y", moveDirection.y);
-        rb2d.position += moveDirection * maxSpeed * Time.deltaTime;
+        if (other.gameObject.name == "Ruby")
+        {
+            destination = other.transform.position;
+            persecution = true;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.name == "Ruby")
+            persecution = false;
+    }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        Debug.Log($"<color=blue>Collide with {other.gameObject.name}</color>");
+
+        foreach (ContactPoint2D contact in other.contacts)
+            {
+                // Debug.DrawRay(contact.point, contact.normal * 10, Color.white);
+                Debug.Log($"Contact point{contact.point}");
+            }
     }
 
     private void OnCollisionStay2D(Collision2D other)
@@ -72,38 +88,19 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        Debug.Log($"<color=blue>Collide with {other.gameObject.name}</color>");
-
-        foreach (ContactPoint2D contact in other.contacts)
-            {
-                // Debug.DrawRay(contact.point, contact.normal * 10, Color.white);
-                Debug.Log($"Contact point{contact.point}");
-            }
-            
-        Debug.Log($"<color=red>Velocity {other.relativeVelocity} Magnitude {other.relativeVelocity.magnitude}</color>");
-    }
-
     private void OnCollisionExit2D(Collision2D other) 
     {
         if ((other.gameObject.tag == "Robot") || (other.gameObject.name == "Ruby")) return;
         obstacle = false;
     }
 
-    private void OnTriggerStay2D(Collider2D other)
+    private void MoveTo(Vector2 direction)
     {
-        if (other.gameObject.name == "Ruby")
-        {
-            destination = other.transform.position;
-            persecution = true;
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.gameObject.name == "Ruby")
-            persecution = false;
+        moveDirection = direction - rb2d.position;
+        moveDirection.Normalize();
+        animator.SetFloat("Move X", moveDirection.x);
+        animator.SetFloat("Move Y", moveDirection.y);
+        rb2d.position += moveDirection * maxSpeed * Time.deltaTime;
     }
 
     public void Fix()
@@ -114,15 +111,11 @@ public class EnemyController : MonoBehaviour
 
     private IEnumerator Fixed()
     {
-        // rb2d.simulated = false;
-        // rb2d.isKinematic = true;
         isFixed = true;
         animator.SetBool("isFixed", true);
         yield return new WaitForSeconds(fixTime);
         isFixed = false;
         animator.SetBool("isFixed", false);
-        // rb2d.isKinematic = false;
-        // rb2d.simulated = true;
     }
 
     private void Detour(Vector2 center, Vector2 size, Vector2 robotSize)

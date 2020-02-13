@@ -23,25 +23,21 @@ public class Projectile : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-    public void Launch(Vector2 direction)
+    private void OnCollisionEnter2D(Collision2D other)
     {
-        rb2d.AddForce(direction * cogForce);
-    }
-
-    private void OnCollisionEnter2D(Collision2D other) {
-
-        rb2d.drag = 0.6f;       
-        rb2d.AddForce(other.relativeVelocity * 10);
-        Debug.Log($"Velocity {rb2d.velocity}");
-        Debug.Log($"RelativeVelocity {other.relativeVelocity}");
+        rb2d.drag = 0.6f;                               // Затухание
+        rb2d.AddForce(other.relativeVelocity * 10);     // Сила отдачи
         EnemyController enemy = other.collider.GetComponent<EnemyController>();
         if (enemy != null) 
         {
             enemy.Fix();
             Destroy(gameObject);
         }
-        //Debug.Log($"Снаряд столкнулся с {other.gameObject}");
-        
     }
+
+    public void Launch(Vector2 direction)
+    {
+        rb2d.AddForce(direction * cogForce);
+    }
+
 }
