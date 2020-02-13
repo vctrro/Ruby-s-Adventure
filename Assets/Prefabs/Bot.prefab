@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSpeed: 2
-  PS: {fileID: 3937421429572865302}
+  ps_Explosion: {fileID: 3937421429572865302}
 --- !u!95 &3314894722599376492
 Animator:
   serializedVersion: 3

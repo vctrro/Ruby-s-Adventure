@@ -17994,6 +17994,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bot (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 3439614664472657285, guid: 68a84f6d397a6934399c3be00a3c2b0f,
+        type: 3}
+      propertyPath: m_BodyType
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3937421429572865302, guid: 68a84f6d397a6934399c3be00a3c2b0f,
         type: 3}
       propertyPath: playOnAwake

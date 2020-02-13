@@ -10,14 +10,12 @@ public class Projectile : MonoBehaviour
     private Rigidbody2D rb2d;
     private Vector2 startPosition;
     
-    // Start is called before the first frame update
     private void Awake()
     {
         rb2d = GetComponent<Rigidbody2D>();
         startPosition = transform.position;
     }
 
-    // Update is called once per frame
     private void Update()
     {
         if (Vector2.Distance(startPosition, transform.position) > 8.0f)
@@ -33,13 +31,16 @@ public class Projectile : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D other) {
 
+        rb2d.drag = 0.6f;       
+        rb2d.AddForce(other.relativeVelocity * 10);
+        Debug.Log($"Velocity {rb2d.velocity}");
+        Debug.Log($"RelativeVelocity {other.relativeVelocity}");
         EnemyController enemy = other.collider.GetComponent<EnemyController>();
         if (enemy != null) 
         {
             enemy.Fix();
             Destroy(gameObject);
         }
-        rb2d.AddForce(rb2d.velocity * -100);
         //Debug.Log($"Снаряд столкнулся с {other.gameObject}");
         
     }

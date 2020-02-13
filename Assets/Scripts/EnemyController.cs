@@ -11,7 +11,7 @@ public class EnemyController : MonoBehaviour
     private Rigidbody2D rb2d;
     private Animator animator;
     private Vector2 startPosition, moveDirection, destination;
-    public ParticleSystem PS;
+    public ParticleSystem ps_Explosion;
 
     private void Start()
     {
@@ -25,7 +25,7 @@ public class EnemyController : MonoBehaviour
     {
         if (isFixed) return;       //Если заблокирован
 
-        if (!persecution && !obstacle)       //Если не преследует игрока идёт домой, если препятствие - обходит
+        if (!persecution && !obstacle)       //Если не преследует игрока и не обходит препятствие - идёт домой
         {
             if ((Vector2.Distance(startPosition, rb2d.position) > 0.2f)) //!rb2d.Equals(startPosition))
             {
@@ -69,7 +69,6 @@ public class EnemyController : MonoBehaviour
             if (obstacle) return;
             obstacle = true;
             Detour(other.collider.bounds.center, other.collider.bounds.extents, other.otherCollider.bounds.extents);
-            
         }
     }
 
@@ -109,11 +108,11 @@ public class EnemyController : MonoBehaviour
 
     public void Fix()
     {
-        PS.Play();
-        StartCoroutine(StuckInTheMud());
+        ps_Explosion.Play();
+        StartCoroutine(Fixed());
     }
 
-    public IEnumerator StuckInTheMud()
+    private IEnumerator Fixed()
     {
         // rb2d.simulated = false;
         // rb2d.isKinematic = true;
