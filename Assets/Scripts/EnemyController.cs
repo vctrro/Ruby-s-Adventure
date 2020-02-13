@@ -6,92 +6,78 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     public float maxSpeed = 2.5f;
-    private bool isFixed, persecution, obstacle;
     private float fixTime = 2.5f;
+    private bool isFixed, ifAtHome, obstacle;
     private Rigidbody2D rb2d;
     private Animator animator;
     private Vector2 startPosition, moveDirection, destination;
-    public ParticleSystem ps_Explosion;
+    [SerializeField] public ParticleSystem ps_Explosion;
 
     private void Start()
     {
         // ruby.OnBigBoom.AddListener(()=>{Fix();});
         rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        startPosition = rb2d.position;
+        destination = startPosition = rb2d.position;
     }
 
     private void Update()
     {
-        if (isFixed) return;       //Если заблокирован
+        if (ifAtHome || isFixed) return;       // Если дома или заблокирован ничего не делает
 
-        if (!persecution && !obstacle)       //Если не преследует игрока и не обходит препятствие - идёт домой
-        {
-            if ((Vector2.Distance(startPosition, rb2d.position) > 0.2f)) //!rb2d.Equals(startPosition))
-            {
-                destination = startPosition;
-            }
-            else
-            {
-                destination = rb2d.position;
-            }
-        }
-
+        if (rb2d.position.Equals(startPosition)) ifAtHome = true; // Пришел домой
         MoveTo(destination);
     }
 
-    private void LateUpdate() 
-    {
-        
-    }
     private void OnTriggerStay2D(Collider2D other)
     {
         if (other.gameObject.name == "Ruby")
         {
+            ifAtHome = false;
             destination = other.transform.position;
-            persecution = true;
         }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
         if (other.gameObject.name == "Ruby")
-            persecution = false;
+        {
+            destination = startPosition;
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D other)
     {
         Debug.Log($"<color=blue>Collide with {other.gameObject.name}</color>");
+        if (other.gameObject.name == "Ruby") return;
 
-        foreach (ContactPoint2D contact in other.contacts)
-            {
-                // Debug.DrawRay(contact.point, contact.normal * 10, Color.white);
-                Debug.Log($"Contact point{contact.point}");
-            }
+        //обходить препятствия
+        if (other.collider.bounds.IntersectRay(new Ray(other.otherCollider.bounds.center, destination)))
+        {
+            //if (obstacle) return;
+            obstacle = true;
+            destination = other.collider.ClosestPoint(other.otherCollider.bounds.center);// + (Vector2) other.otherCollider.bounds.extents;
+            //Detour(other.collider.bounds.center, other.collider.bounds.extents, other.otherCollider.bounds.extents);
+            Debug.Log($"<color=white>Move {other.otherCollider.bounds.center} to {destination}</color>");
+        }
+        else
+        {
+            obstacle = false;
+        }
     }
 
     private void OnCollisionStay2D(Collision2D other)
     {
-        if (isFixed) return;
-        if (other.gameObject.tag == "Robot") return;
-
-        if (other.gameObject.name == "Ruby")
+        if (other.gameObject.name == "Ruby" && !isFixed)
         {
             other.collider.GetComponent<RubyController>().ChangeHealth(-1);
-        }
-        else 
-        {
-            //обходить препятствия
-            if (obstacle) return;
-            obstacle = true;
-            Detour(other.collider.bounds.center, other.collider.bounds.extents, other.otherCollider.bounds.extents);
         }
     }
 
     private void OnCollisionExit2D(Collision2D other) 
     {
         if ((other.gameObject.tag == "Robot") || (other.gameObject.name == "Ruby")) return;
-        obstacle = false;
+        // obstacle = false;
     }
 
     private void MoveTo(Vector2 direction)
@@ -100,7 +86,8 @@ public class EnemyController : MonoBehaviour
         moveDirection.Normalize();
         animator.SetFloat("Move X", moveDirection.x);
         animator.SetFloat("Move Y", moveDirection.y);
-        rb2d.position += moveDirection * maxSpeed * Time.deltaTime;
+        // rb2d.position += moveDirection * maxSpeed * Time.deltaTime;
+        rb2d.position = Vector2.MoveTowards(rb2d.position, direction, Time.deltaTime * maxSpeed);
     }
 
     public void Fix()
