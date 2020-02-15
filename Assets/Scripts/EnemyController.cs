@@ -5,12 +5,12 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator))]
 public class EnemyController : MonoBehaviour
 {
-    public float maxSpeed = 2.5f;
+    [SerializeField] public float maxSpeed = 2.5f;
     private float fixTime = 2.5f;
-    private bool isFixed, ifAtHome, obstacle;
+    private bool isFixed, ifAtHome = true, left;
     private Rigidbody2D rb2d;
     private Animator animator;
-    private Vector2 startPosition, moveDirection, destination;
+    private Vector2 startPosition, moveDirection, destination, detour;
     [SerializeField] public ParticleSystem ps_Explosion;
 
     private void Start()
@@ -26,7 +26,7 @@ public class EnemyController : MonoBehaviour
         if (ifAtHome || isFixed) return;       // Если дома или заблокирован ничего не делает
 
         if (rb2d.position.Equals(startPosition)) ifAtHome = true; // Пришел домой
-        MoveTo(destination);
+        MoveTo();
     }
 
     private void OnTriggerStay2D(Collider2D other)
@@ -46,26 +46,6 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        Debug.Log($"<color=blue>Collide with {other.gameObject.name}</color>");
-        if (other.gameObject.name == "Ruby") return;
-
-        //обходить препятствия
-        if (other.collider.bounds.IntersectRay(new Ray(other.otherCollider.bounds.center, destination)))
-        {
-            //if (obstacle) return;
-            obstacle = true;
-            destination = other.collider.ClosestPoint(other.otherCollider.bounds.center);// + (Vector2) other.otherCollider.bounds.extents;
-            //Detour(other.collider.bounds.center, other.collider.bounds.extents, other.otherCollider.bounds.extents);
-            Debug.Log($"<color=white>Move {other.otherCollider.bounds.center} to {destination}</color>");
-        }
-        else
-        {
-            obstacle = false;
-        }
-    }
-
     private void OnCollisionStay2D(Collision2D other)
     {
         if (other.gameObject.name == "Ruby" && !isFixed)
@@ -74,20 +54,15 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    private void OnCollisionExit2D(Collision2D other) 
+    private void MoveTo()
     {
-        if ((other.gameObject.tag == "Robot") || (other.gameObject.name == "Ruby")) return;
-        // obstacle = false;
-    }
-
-    private void MoveTo(Vector2 direction)
-    {
-        moveDirection = direction - rb2d.position;
-        moveDirection.Normalize();
+        destination = LookAround(destination);
+        moveDirection = destination - rb2d.position;
+        // moveDirection.Normalize();
         animator.SetFloat("Move X", moveDirection.x);
         animator.SetFloat("Move Y", moveDirection.y);
         // rb2d.position += moveDirection * maxSpeed * Time.deltaTime;
-        rb2d.position = Vector2.MoveTowards(rb2d.position, direction, Time.deltaTime * maxSpeed);
+        rb2d.position = Vector2.MoveTowards(rb2d.position, destination, Time.deltaTime * maxSpeed);
     }
 
     public void Fix()
@@ -105,32 +80,69 @@ public class EnemyController : MonoBehaviour
         animator.SetBool("isFixed", false);
     }
 
-    private void Detour(Vector2 center, Vector2 size, Vector2 robotSize)
+    private void LookAround1()
     {
-        Vector2 detour;
+        LayerMask mask = LayerMask.GetMask("Obstacles", "Water");
+        RaycastHit2D hit = Physics2D.Linecast(rb2d.position, destination, mask);
+        Debug.DrawLine(rb2d.position, destination, Color.green);
+        Debug.Log($"<color=green>Move {rb2d.position} to {destination}</color>");
+        if (hit.collider != null)        
+        {
+            detour = hit.collider.ClosestPoint(hit.point);
+            hit = Physics2D.Linecast(rb2d.position, detour, mask);
+            Debug.DrawLine(rb2d.position, detour, Color.red);
+            Debug.Log($"<color=red>Move {rb2d.position} to {detour}</color>");
+        }
+    }
+    private Vector2 LookAround(Vector2 destination)
+    {
+        LayerMask mask = LayerMask.GetMask("Obstacles", "Water");
+        RaycastHit2D hit = Physics2D.Linecast(rb2d.position, destination, mask);
+        Debug.DrawLine(rb2d.position, destination, Color.green);
+        // Debug.Log($"<color=green>Move {rb2d.position} to {destination}</color>");
+        if (hit.collider != null)        
+        {
+            Debug.DrawLine(rb2d.position, (Vector2)hit.collider.bounds.center, Color.red);
 
-        if (rb2d.position.x >= center.x)
-        {
-            // Debug.Log($"<color=green>X IF {rb2d.position.x} >= {center.x}</color>");
-            detour.x = center.x + size.x + robotSize.x +0.1f;
+            // if (((Vector2)hit.collider.bounds.center - rb2d.position).x - (hit.point - rb2d.position).x <= 0)
+            if (Vector2.SignedAngle((Vector2)hit.collider.bounds.center - rb2d.position, hit.point - rb2d.position) <= 0)
+            {
+                if (left)
+                Debug.Log("<color=green>Go to Right</color>");
+                left = false;
+            }
+            else
+            {
+                if (!left)
+                Debug.Log("<color=red>Go to Left</color>");
+                left = true;
+            }
+
+            /* if (hit.point.Equals(Vector2.Min(hit.point, hit.centroid)))
+            {
+                if (hit.point.Equals(Vector2.Min(hit.point, hit.centroid)))
+                {
+
+                }
+                detour = hit.collider.bounds.min;
+                detour.Set(detour.x, detour.y - 0.6f);
+                hit = Physics2D.Linecast(rb2d.position, detour, mask);
+                Debug.DrawLine(rb2d.position, detour, Color.red);
+                Debug.Log($"<color=red>Centroid {hit.centroid} to {detour}</color>");
+                return detour;
+            } */
+            // Debug.Log($"<color=white>Move {detour} to {hit.collider.bounds.min}</color>");
         }
-        else
+        return destination;
+    }
+
+    private IEnumerator Detour()
+    {
+        while (true)
         {
-            // Debug.Log($"<color=red>X ELSE {rb2d.position.x} <= {center.x}</color>");
-            detour.x = center.x - size.x - robotSize.x -0.1f;
+
+            yield return null;
         }
-        if (rb2d.position.y >= center.y)
-        {
-            // Debug.Log($"<color=green>Y IF {rb2d.position.y} >= {center.y}</color>");
-            detour.y = center.y + size.y + robotSize.y +0.1f;
-        }
-        else
-        {
-            // Debug.Log($"<color=red>Y ELSE {rb2d.position.y} <= {center.y}</color>");
-            detour.y = center.y - size.y - robotSize.y -0.1f;
-        }
-        destination = detour;
-        Debug.Log($"<color=white>Move {rb2d.position} to {detour}</color>");
-        // MoveTo(detour);
+        yield return new WaitForSeconds(1);
     }
 }

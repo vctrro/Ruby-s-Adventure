@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7037211667257261987}
   - component: {fileID: 7037211667257261984}
   - component: {fileID: -5913185983537098375}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: MetalCube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 7037211667257261985}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -3.48, y: -1.18, z: 0}
-  m_LocalScale: {x: 0.81300807, y: 0.81300807, z: 0.81300807}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -95,16 +95,16 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.26128936, y: 0.30297905}
+  m_Offset: {x: -0.18440726, y: 0.280362}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0}
-    oldSize: {x: 1.6375, y: 1.225}
+    oldSize: {x: 1.31, y: 0.98}
     newSize: {x: 1.31, y: 0.98}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.0346398, y: 0.5155126}
+  m_Size: {x: 0.88087565, y: 0.4702785}
   m_EdgeRadius: 0
