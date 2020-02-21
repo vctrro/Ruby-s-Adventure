@@ -18,6 +18,8 @@ public class EnemyController : MonoBehaviour
         // ruby.OnBigBoom.AddListener(()=>{Fix();});
         rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        transform.Find("BotTrigger").GetComponent<EnemyTrigger>().OnFindRuby.AddListener(FindRuby);
+        transform.Find("BotTrigger").GetComponent<EnemyTrigger>().OnLostRuby.AddListener(LostRuby);
         destination = startPosition = rb2d.position;
     }
 
@@ -26,24 +28,8 @@ public class EnemyController : MonoBehaviour
         if (ifAtHome || isFixed) return;       // Если дома или заблокирован ничего не делает
 
         if (rb2d.position.Equals(startPosition)) ifAtHome = true; // Пришел домой
+        
         MoveTo();
-    }
-
-    private void OnTriggerStay2D(Collider2D other)
-    {
-        if (other.gameObject.name == "Ruby")
-        {
-            ifAtHome = false;
-            destination = other.transform.position;
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.gameObject.name == "Ruby")
-        {
-            destination = startPosition;
-        }
     }
 
     private void OnCollisionStay2D(Collision2D other)
@@ -52,6 +38,17 @@ public class EnemyController : MonoBehaviour
         {
             other.collider.GetComponent<RubyController>().ChangeHealth(-1);
         }
+    }
+
+    private void FindRuby(Vector2 other)
+    {
+        ifAtHome = false;
+        destination = other;
+    }
+
+    private void LostRuby()
+    {
+        destination = startPosition;
     }
 
     private void MoveTo()
@@ -102,11 +99,10 @@ public class EnemyController : MonoBehaviour
         // Debug.Log($"<color=green>Move {rb2d.position} to {destination}</color>");
         if (hit.collider != null)        
         {
-            Debug.DrawLine(rb2d.position, (Vector2)hit.collider.bounds.center, Color.red);
-
             // if (((Vector2)hit.collider.bounds.center - rb2d.position).x - (hit.point - rb2d.position).x <= 0)
             if (Vector2.SignedAngle((Vector2)hit.collider.bounds.center - rb2d.position, hit.point - rb2d.position) <= 0)
             {
+                Debug.DrawLine(rb2d.position, (Vector2)hit.collider.bounds.center, Color.red);
                 if (left)
                 Debug.Log("<color=green>Go to Right</color>");
                 left = false;
