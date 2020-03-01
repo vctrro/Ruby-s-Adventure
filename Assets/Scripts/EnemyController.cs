@@ -5,21 +5,22 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator))]
 public class EnemyController : MonoBehaviour
 {
+    [SerializeField] public ParticleSystem ps_Explosion;
     [SerializeField] public float maxSpeed = 2.5f;
     private float fixTime = 2.5f;
     private bool isFixed, ifAtHome = true, left;
     private Rigidbody2D rb2d;
     private Animator animator;
     private Vector2 startPosition, moveDirection, destination, detour;
-    [SerializeField] public ParticleSystem ps_Explosion;
 
     private void Start()
     {
         // ruby.OnBigBoom.AddListener(()=>{Fix();});
         rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        transform.Find("BotTrigger").GetComponent<EnemyTrigger>().OnFindRuby.AddListener(FindRuby);
-        transform.Find("BotTrigger").GetComponent<EnemyTrigger>().OnLostRuby.AddListener(LostRuby);
+        EnemyTrigger trigger = transform.Find("BotTrigger").GetComponent<EnemyTrigger>();
+        trigger.OnFindRuby.AddListener(FindRuby);
+        trigger.OnLostRuby.AddListener(LostRuby);
         destination = startPosition = rb2d.position;
     }
 
@@ -77,28 +78,29 @@ public class EnemyController : MonoBehaviour
         animator.SetBool("isFixed", false);
     }
 
-    private void LookAround1()
-    {
-        LayerMask mask = LayerMask.GetMask("Obstacles", "Water");
-        RaycastHit2D hit = Physics2D.Linecast(rb2d.position, destination, mask);
-        Debug.DrawLine(rb2d.position, destination, Color.green);
-        Debug.Log($"<color=green>Move {rb2d.position} to {destination}</color>");
-        if (hit.collider != null)        
-        {
-            detour = hit.collider.ClosestPoint(hit.point);
-            hit = Physics2D.Linecast(rb2d.position, detour, mask);
-            Debug.DrawLine(rb2d.position, detour, Color.red);
-            Debug.Log($"<color=red>Move {rb2d.position} to {detour}</color>");
-        }
-    }
     private Vector2 LookAround(Vector2 destination)
     {
+        ContactFilter2D mask = new ContactFilter2D();
+        mask.layerMask = LayerMask.GetMask("Obstacles", "Water");
+        mask.useLayerMask = true;
+        RaycastHit2D[] hit = new RaycastHit2D[1];
+        Debug.DrawLine(rb2d.position, destination, Color.green);
+        if (rb2d.GetComponent<BoxCollider2D>().Cast(destination-rb2d.position, mask, hit, 6.0f) > 0)
+        {
+            Debug.DrawLine(rb2d.position, hit[0].centroid, Color.red);
+        }
+        return destination;
+    }
+    private Vector2 LookAround2(Vector2 destination)
+    {
         LayerMask mask = LayerMask.GetMask("Obstacles", "Water");
         RaycastHit2D hit = Physics2D.Linecast(rb2d.position, destination, mask);
+        Vector2 direction = destination - rb2d.position;
+        direction.Normalize();
         Debug.DrawLine(rb2d.position, destination, Color.green);
-        // Debug.Log($"<color=green>Move {rb2d.position} to {destination}</color>");
         if (hit.collider != null)        
         {
+        Debug.Log($"<color=green>Destination {direction}</color>");
             // if (((Vector2)hit.collider.bounds.center - rb2d.position).x - (hit.point - rb2d.position).x <= 0)
             if (Vector2.SignedAngle((Vector2)hit.collider.bounds.center - rb2d.position, hit.point - rb2d.position) <= 0)
             {
